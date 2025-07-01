@@ -2,3 +2,4 @@ datasets
 langchain_core
 langchain_community
 rank_bm25
+llama_index
