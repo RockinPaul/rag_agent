@@ -27,14 +27,27 @@ alfred = AgentWorkflow.from_tools_or_functions(
 
 
 async def main():
-    query = "Tell me about Lady Ada Lovelace. What's her background?"
+    # query = "Tell me about Lady Ada Lovelace. What's her background?"
+    # response = await alfred.run(query)
+
+    # print("🎩 Alfred's Response:")
+    # print(response.response.blocks[0].text)
+
+
+    # query = "What's the weather like in Paris tonight? Will it be suitable for our fireworks display?"
+    # response = await alfred.run(query)
+
+    # print("🎩 Alfred's Response:")
+    # print(response)
+
+    query = "One of our guests is from Google. What can you tell me about their most popular model?"
     response = await alfred.run(query)
 
     print("🎩 Alfred's Response:")
-    print(response.response.blocks[0].text)
+    print(response)
 
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(main())
-    
