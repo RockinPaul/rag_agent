@@ -67,31 +67,31 @@ def get_hub_stats(author: str) -> str:
 # Initialize the tool
 hub_stats_tool = FunctionTool.from_defaults(get_hub_stats)
 
-# Example usage
-print(hub_stats_tool("facebook"))  # Example: Get the most downloaded model by Facebook
+# # Example usage
+# print(hub_stats_tool("facebook"))  # Example: Get the most downloaded model by Facebook
 
 
-async def main():
-    # Initialize the OpenAI model
-    openai_api_key = os.getenv("OPEN_AI_API_KEY")
+# async def main():
+#     # Initialize the OpenAI model
+#     openai_api_key = os.getenv("OPEN_AI_API_KEY")
 
-    llm = OpenAI(
-        model_name="gpt-4.1-nano-2025-04-14",
-        temperature=0.7,
-        max_tokens=100,
-        api_key=openai_api_key,
-    )
-    # Create Alfred with all the tools
-    alfred = AgentWorkflow.from_tools_or_functions(
-        [search_tool, weather_info_tool, hub_stats_tool], llm=llm
-    )
+#     llm = OpenAI(
+#         model_name="gpt-4.1-nano-2025-04-14",
+#         temperature=0.7,
+#         max_tokens=100,
+#         api_key=openai_api_key,
+#     )
+#     # Create Alfred with all the tools
+#     alfred = AgentWorkflow.from_tools_or_functions(
+#         [search_tool, weather_info_tool, hub_stats_tool], llm=llm
+#     )
 
-    # Example query Alfred might receive during the gala
-    response = await alfred.run("What is Facebook and what's their most popular model?")
+#     # Example query Alfred might receive during the gala
+#     response = await alfred.run("What is Facebook and what's their most popular model?")
 
-    print("🎩 Alfred's Response:")
-    print(response)
+#     print("🎩 Alfred's Response:")
+#     print(response)
 
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+# if __name__ == "__main__":
+#     import asyncio
+#     asyncio.run(main())
