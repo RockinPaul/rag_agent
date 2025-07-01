@@ -1,5 +1,6 @@
 # Import necessary libraries
 from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.core.workflow import Context
 from llama_index.llms.openai import OpenAI
 
 from tools import search_tool, weather_info_tool, hub_stats_tool
@@ -33,18 +34,36 @@ async def main():
     # print("🎩 Alfred's Response:")
     # print(response.response.blocks[0].text)
 
-
     # query = "What's the weather like in Paris tonight? Will it be suitable for our fireworks display?"
     # response = await alfred.run(query)
 
     # print("🎩 Alfred's Response:")
     # print(response)
 
-    query = "One of our guests is from Google. What can you tell me about their most popular model?"
-    response = await alfred.run(query)
+    # query = "One of our guests is from Google. What can you tell me about their most popular model?"
+    # response = await alfred.run(query)
 
-    print("🎩 Alfred's Response:")
-    print(response)
+    # print("🎩 Alfred's Response:")
+    # print(response)
+
+    # query = "I need to speak with Dr. Nikola Tesla about recent advancements in wireless energy. Can you help me prepare for this conversation?"
+    # response = await alfred.run(query)
+
+    # print("🎩 Alfred's Response:")
+    # print(response)
+
+    # Remembering state
+    ctx = Context(alfred)
+
+    # First interaction
+    response1 = await alfred.run("Tell me about Lady Ada Lovelace.", ctx=ctx)
+    print("🎩 Alfred's First Response:")
+    print(response1)
+
+    # Second interaction (referencing the first)
+    response2 = await alfred.run("What projects is she currently working on?", ctx=ctx)
+    print("🎩 Alfred's Second Response:")
+    print(response2)
 
 
 if __name__ == "__main__":
