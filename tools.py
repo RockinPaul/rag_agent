@@ -2,11 +2,28 @@ from llama_index.tools.wikipedia import WikipediaToolSpec
 from llama_index.core.tools import FunctionTool
 import random
 from huggingface_hub import list_models
+from llama_index.core.agent.workflow import AgentWorkflow
+from llama_index.llms.openai import OpenAI
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Initialize the Wikipedia search tool
 tool_spec = WikipediaToolSpec()
 
-search_tool = FunctionTool.from_defaults(tool_spec.search_data)
+
+def truncated_wikipedia_search(query: str) -> str:
+    """Searches Wikipedia for a query and returns a truncated version of the first result."""
+    # tool_spec.search_data returns a list of Document objects
+    documents = tool_spec.search_data(query)
+    if documents:
+        content = documents[0].get_content()
+        return content[:4000]  # Truncate to 4000 chars
+    return "No result found."
+
+
+search_tool = FunctionTool.from_defaults(truncated_wikipedia_search)
 
 # Example usage:
 # response = search_tool("What is a Large Language Model?")
@@ -52,3 +69,29 @@ hub_stats_tool = FunctionTool.from_defaults(get_hub_stats)
 
 # Example usage
 print(hub_stats_tool("facebook"))  # Example: Get the most downloaded model by Facebook
+
+
+async def main():
+    # Initialize the OpenAI model
+    openai_api_key = os.getenv("OPEN_AI_API_KEY")
+
+    llm = OpenAI(
+        model_name="gpt-4.1-nano-2025-04-14",
+        temperature=0.7,
+        max_tokens=100,
+        api_key=openai_api_key,
+    )
+    # Create Alfred with all the tools
+    alfred = AgentWorkflow.from_tools_or_functions(
+        [search_tool, weather_info_tool, hub_stats_tool], llm=llm
+    )
+
+    # Example query Alfred might receive during the gala
+    response = await alfred.run("What is Facebook and what's their most popular model?")
+
+    print("🎩 Alfred's Response:")
+    print(response)
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())

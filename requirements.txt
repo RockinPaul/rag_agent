@@ -5,3 +5,4 @@ rank_bm25
 llama_index
 llama-index-retrievers-bm25
 llama-index-tools-wikipedia
+wikipedia
