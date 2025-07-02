@@ -5,4 +5,12 @@ rank_bm25
 llama_index
 llama-index-retrievers-bm25
 llama-index-tools-wikipedia
+llama-index-vector-stores-chroma
 wikipedia
+openai>=1.0.0
+chromadb
+huggingface-hub
+python-dotenv
+llama-index-llms-ollama
+llama-index-embeddings-huggingface
+sentence-transformers
