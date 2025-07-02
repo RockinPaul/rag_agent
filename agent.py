@@ -158,7 +158,7 @@ class GAIARAGAgent:
             callback_manager=self.callback_manager,
             handle_parsing_errors=handle_reasoning_failure,
             # Add system prompt if needed for better task handling
-            system_prompt="You are an AI assistant for the GAIA benchmark. Your task is to help users with various questions and tasks using the available tools and knowledge."
+            system_prompt="You are a general AI assistant. I will ask you a question. Report your thoughts, and finish your answer with the following template: FINAL ANSWER: [YOUR FINAL ANSWER]. YOUR FINAL ANSWER should be a number OR as few words as possible OR a comma separated list of numbers and/or strings. If you are asked for a number, don't use comma to write your number neither use units such as $ or percent sign unless specified otherwise. If you are asked for a string, don't use articles, neither abbreviations (e.g. for cities), and write the digits in plain text unless specified otherwise. If you are asked for a comma separated list, apply the above rules depending of whether the element to be put in the list is a number or a string."
         )
     
     def add_documents_to_rag(self, documents: List[Document]) -> None:
@@ -324,5 +324,65 @@ def run_example() -> None:
     print(f"\nToken usage: {json.dumps(token_usage, indent=2)}")
 
 
+def process_dataset(metadata_path: str, output_path: str, model_name: str = "deepseek-r1:1.5b", temperature: float = 0.2, verbose: bool = False) -> None:
+    """Process GAIA dataset and write answers to output_path.
+
+    Args:
+        metadata_path: Path to metadata.jsonl containing tasks.
+        output_path: Path to write answers.json (newline separated JSON objects).
+    """
+    import json
+    answers = []
+    agent = create_agent(model_name=model_name, temperature=temperature, verbose=verbose)
+
+    with open(metadata_path, "r", encoding="utf-8") as f:
+        for line in f:
+            data = json.loads(line)
+            task_id = data.get("task_id")
+            question = data.get("Question")
+            if not task_id or not question:
+                continue
+            # Query agent
+            try:
+                response, _ = agent.query(question)
+            except Exception as e:
+                response = f"Error: {str(e)}"
+            answers.append({
+                "task_id": task_id,
+                "model_answer": response
+            })
+
+    # Write answers
+    with open(output_path, "w", encoding="utf-8") as outf:
+        for ans in answers:
+            json.dump(ans, outf, ensure_ascii=False)
+            outf.write("\n")
+
+
 if __name__ == "__main__":
-    run_example()
+    """CLI helper.
+
+    Usage examples:
+        python agent.py                 # runs example demo
+        python agent.py dataset         # processes default GAIA dataset
+        python agent.py /path/to/meta /path/to/out.json
+    """
+    import sys
+    if len(sys.argv) == 1:
+        # Default: run example
+        run_example()
+    else:
+        # Process dataset
+        base_dir = os.path.dirname(__file__)
+        if len(sys.argv) == 2 and sys.argv[1] == "dataset":
+            meta_path = os.path.join(base_dir, "GAIA", "2023", "test", "metadata.jsonl")
+            out_path = os.path.join(base_dir, "answers.json")
+        elif len(sys.argv) >= 3:
+            meta_path = sys.argv[1]
+            out_path = sys.argv[2]
+        else:
+            print("Usage: python agent.py <metadata.jsonl> <answers.json>")
+            sys.exit(1)
+        print(f"Processing dataset {meta_path} -> {out_path}")
+        process_dataset(meta_path, out_path, verbose=True)
+        print("Finished writing answers.")
