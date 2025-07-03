@@ -1,16 +1,20 @@
-datasets
-langchain_core
-langchain_community
-rank_bm25
-llama_index
-llama-index-retrievers-bm25
+datasets>=2.18.0
+langchain_core>=0.2.0
+langchain_community>=0.2.0
+rank_bm25>=0.2.2
+
+# --- LlamaIndex core & extras (>=0.12.46 gives workflow ReActAgent) ---
+llama_index>=0.12.46
+llama-index-core>=0.12.46
 llama-index-tools-wikipedia
 llama-index-vector-stores-chroma
-wikipedia
-openai>=1.0.0
-chromadb
-huggingface-hub
-python-dotenv
 llama-index-llms-ollama
 llama-index-embeddings-huggingface
-sentence-transformers
+
+# Other deps
+wikipedia>=1.4.0
+openai>=1.0.0  # kept for optional integration
+chromadb>=0.5.0
+huggingface-hub>=0.20.3
+python-dotenv>=1.0.0
+sentence-transformers>=2.6.1
